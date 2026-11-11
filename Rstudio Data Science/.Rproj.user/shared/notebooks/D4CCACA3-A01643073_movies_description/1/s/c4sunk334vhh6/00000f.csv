@@ -1,0 +1,4 @@
+"0","# Type the code for drawing a boxplot for IMDb ratings"
+"0","movies |>"
+"0","  ggplot(aes(x=imdb)) +"
+"0","  geom_boxplot()"

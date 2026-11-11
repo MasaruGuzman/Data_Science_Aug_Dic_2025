@@ -1,0 +1,7 @@
+"0","cars_graph + "
+"0","  geom_histogram(aes(y=after_stat(density)),bins = 6,color = 1, fill = ""white"") +"
+"0","  geom_density(alpha = 0.25,lwd = 1.5, colour = ""4"","
+"0","               fill = ""blue"") +"
+"0","  labs(title = ""Miles per gallon density plot and histogram"","
+"0","       x = ""Miles per gallon"","
+"0","       y = ""Density"")"

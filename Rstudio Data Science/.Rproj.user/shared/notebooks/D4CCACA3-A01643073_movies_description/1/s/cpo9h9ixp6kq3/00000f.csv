@@ -1,0 +1,4 @@
+"0","# Type the code for drawing a boxplot for your personal ratings "
+"0","movies |>"
+"0","  ggplot(aes(x=personal)) +"
+"0","  geom_boxplot()"

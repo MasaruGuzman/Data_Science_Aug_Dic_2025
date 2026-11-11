@@ -1,0 +1,7 @@
+"0","chart_imdb + "
+"0","  geom_histogram(aes(y=after_stat(density)),bins = 10,color = 1, fill = ""white"") +"
+"0","  geom_density(alpha = 0.25,lwd = 1, colour = ""4"","
+"0","               fill = ""blue"") +"
+"0","  labs(title = ""Histogram for IMDb ratings"","
+"0","       x = ""Ratings"","
+"0","       y = ""Density"")"

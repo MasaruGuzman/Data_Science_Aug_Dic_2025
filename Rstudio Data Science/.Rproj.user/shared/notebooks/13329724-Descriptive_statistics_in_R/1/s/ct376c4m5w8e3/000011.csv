@@ -1,0 +1,5 @@
+"0","var(mtcars_mpg) == (sd(mtcars_mpg))^2"
+"1","[1]"
+"1"," TRUE"
+"1","
+"

@@ -1,0 +1,78 @@
+---
+title: "Activity 3: Numerical and graphical description of a data set in R"
+format: html
+editor: visual
+---
+
+# IMDb basic exploratory data analysis
+
+```{r}
+# Change backslashes to forward slashes
+library(summarytools)
+library(tidyverse)
+library(ggplot2)
+movies <- read.csv("C:/Users/masar/Downloads/Data Recolection - Data Recolection.csv")
+# put the dataset in the same folder as project so you don't need to write the complete path to the file
+
+head(movies)
+
+```
+
+```{r}
+movies$IMDb
+```
+
+## IMDb mean
+
+```{r}
+mean(movies$IMDb)
+```
+
+## IMDb Median
+
+```{r}
+median(movies$IMDb)
+```
+
+## IMDb Range
+
+```{r}
+range(movies$IMDb)
+```
+
+## IMDb Variance
+
+```{r}
+var(movies$IMDb)
+```
+
+## IMDb Standard Deviation
+
+```{r}
+sd(movies$IMDb)
+```
+
+## IMDb Histogram
+
+```{r}
+movies$Budget..Millions.USD. <- as.numeric(movies$Budget..Millions.USD.)
+# movies$Budget.Millions.USD.
+```
+
+```{r}
+chart_imdb + 
+  geom_histogram(aes(y=after_stat(density)),bins = 10,color = 1, fill = "white") +
+  geom_density(alpha = 0.25,lwd = 1, colour = "4",
+               fill = "blue") +
+  labs(title = "Histogram for IMDb ratings",
+       x = "Ratings",
+       y = "Density")
+```
+
+## IMDb Boxplot
+
+```{r}
+movies |>
+  ggplot(aes(x=IMDb)) +
+  geom_boxplot()
+```

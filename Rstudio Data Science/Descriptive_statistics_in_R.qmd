@@ -1,0 +1,273 @@
+---
+title: "Basic Statistics"
+format:
+  html: default
+  pdf:
+    pdf-engine: pdflatex
+editor: visual
+---
+
+## Introduction
+
+In this small document we will practice basic statistics. We will explore the dataset `mtcars`, which is included in the basic R installation.
+
+## Libraries and Data
+
+We will begin by loading the libraries we will use. Instead of loading our libraries one at a time, we can just load `tidyverse`, which includes all the tools that we'll need
+
+```{r}
+library(summarytools)
+library(tidyverse)
+```
+
+Now, we load our dataset
+
+```{r}
+attach(mtcars)
+```
+
+## Exploring the dataset
+
+We can explore the contents of the dataset just by typing in its name
+
+```{r}
+mtcars
+```
+
+The dataset consists of 11 variables for 32 records. Let's explore the variable `mpg` by first creating a new variable:
+
+```{r}
+mtcars_mpg <- mtcars$mpg
+```
+
+## Descriptive statistics
+
+### Minimum and maximum
+
+Minimum and maximum can be found thanks to the `min()` and `max()` functions:
+
+```{r}
+min(mtcars_mpg)
+```
+
+```{r}
+max(mtcars_mpg)
+```
+
+Alternatively the `range()` function gives you the minimum and maximum directly:
+
+```{r}
+rng <- range(mtcars_mpg)
+rng
+```
+
+Note that the output of the `range()` function is actually an object containing the minimum and maximum (in that order). This means you can actually access the minimum with
+
+```{r}
+rng[1]
+rng[2]
+```
+
+This reminds us that, in R, there are often several ways to arrive at the same result. The method that uses the shortest piece of code is usually preferred as a shorter piece of code is less prone to coding errors and more readable.
+
+### Measures of central tendency
+
+#### Mean
+
+The mean can be computed with the `mean()` function
+
+```{r}
+mean(mtcars_mpg)
+mean(mtcars_mpg, trim = 0.1)
+```
+
+*Tips:*
+
+-   if there is at least one missing value in your dataset, use `mean(data, na.rm = TRUE)` to compute the mean with the NA excluded. This argument can be used for many other functions, not only the mean
+
+-   for a truncated mean, use `mean(data, trim = 0.10)` and change the `trim` argument to your needs
+
+#### Median
+
+The median can be computed thanks to the `median()` function:
+
+```{r}
+median(mtcars_mpg)
+```
+
+or with the `quantile()` function:
+
+```{r}
+quantile(mtcars_mpg, 0.5)
+```
+
+since the quantile of order 0.5 corresponds to the median.
+
+#### Quantiles
+
+Remember that the $q$ quantile, with $0\le q\le 1$, corresponds to the data point below which we have a fraction $q$ of the data points when sorted in ascending order. So, for instance, the median corresponds to the $0.5$ quantile because 50% of the sorted data is below it.
+
+Other important quantiles are the 0.25 and 0.75 quantiles, also called the 1st and the 3rd quartiles. They can be obtained using the `quantile()` function
+
+```{r}
+quantile(mtcars_mpg, 0.25) # first quartile
+quantile(mtcars_mpg, 0.75) # third quartile
+```
+
+#### Mode
+
+The mode is the value that has highest number of occurrences in a set of data. Unlike mean and median, mode can have both numeric and character data.
+
+R does not have a standard in-built function to calculate mode. So we create a user function to calculate mode of a data set in R. This function takes the vector as input and gives the mode value as output.
+
+```{r}
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+getmode(mtcars_mpg)
+```
+
+### Measures of variation
+
+### Range
+
+The range of the data can be easily computed by subtracting the minimum from the maximum
+
+```{r}
+rng[2]-rng[1]
+```
+
+#### Interquartile range
+
+The interquartile range (i.e., the difference between the first and third quartiles) can be computed with the `IQR()` function
+
+```{r}
+IQR(mtcars_mpg)
+```
+
+#### Standard deviation and variance
+
+The standard deviation and the variance are computed with the `sd()` and `var()` functions, respectively. These functions correspond to the sample standard deviation and variance, since R assumes that the data corresponds to a sample of the population.
+
+```{r}
+sd(mtcars_mpg)
+var(mtcars_mpg)
+```
+
+It is easy to see that the variance is the square of the standar deviation, as it should be.
+
+```{r}
+var(mtcars_mpg) == (sd(mtcars_mpg))^2
+```
+
+### Descriptive statistics of several variables at a time
+
+We can use the `lapply()` function to calculate a statistic of several variables at a time. For instance, if we wanted to find the mean of all numerical variables in our data set, we would type
+
+```{r}
+lapply(mtcars,mean)
+```
+
+Better yet, in basic R we can use `summary()` to display all relevant statistics of all numerical values in the dataset.
+
+```{r}
+summary(mtcars)
+```
+
+And even better with the `descr()` function from the `summarytools` package:
+
+```{r}
+descr(mtcars)
+```
+
+## Graphical analysis
+
+Now that we have a numerical description of our dataset, we can proceed to visualize this information. We will show how to get histograms, boxplots, and other visualizations.
+
+### Histogram
+
+A histogram gives an idea about the distribution of a quantitative variable. The idea is to break the range of values into intervals and count how many observations fall into each interval. Histograms are a bit similar to barplots, but histograms are used for quantitative variables whereas barplots are used for qualitative variables. To draw a histogram in R, use `hist()`:
+
+```{r}
+hist(mtcars_mpg)
+```
+
+Add the arguments `breaks =` inside the `hist()` function if you want to change the number of bins. A rule of thumb (known as Sturges’ law) is that the number of bins should be the rounded value of the square root of the number of observations. The dataset includes 32 observations so in this case the number of bins can be set to 6.
+
+```{r}
+hist(mtcars_mpg, breaks=6)
+```
+
+We can also use the `ggplot2` library, which is loaded by `tidyverse` , to get a more customizable and visually appealing histogram. A `ggplot` visualization is constructed in steps, using a specialized grammar: we need the data, an aesthetics mapping, and a geometry option, plus other customization options, in order to construct the graph. The use of this grammar of graphics allows us to construct different visualizations for the same dataset just by changing one or more aspects of the graph.
+
+For starters, we create a generic visualization for the dataset `mtcars` :
+
+```{r}
+cars_graph <- ggplot(mtcars)
+```
+
+Next, we add an aesthetics mapping for the `mpg` variable:
+
+```{r}
+cars_graph + aes(mpg)
+```
+
+We get an empty canvas over which we can put any geometry we desire. Even though we can add an aesthetics mapping after creating the `ggplot` object, it is customary to create the object and the aesthetics mapping together, and then add a geometry and other option.
+
+```{r}
+cars_graph <- ggplot(mtcars, aes(mpg))
+```
+
+For a basic histogram, we use `geom_histogram()` .
+
+```{r}
+cars_graph + 
+  geom_histogram(bins = 5)
+```
+
+By default, the number of bins is 30. You can change this value with `geom_histogram(bins = 6)` for instance.
+
+```{r}
+cars_graph + 
+  geom_histogram(bins = 6)
+```
+
+We can draw the distribution shape on top of the histogram, plus some options to beautify the plot.
+
+```{r}
+cars_graph + 
+  geom_histogram(aes(y=after_stat(density)),bins = 6,color = 1, fill = "white") +
+  geom_density(alpha = 0.25,lwd = 1.5, colour = "4",
+               fill = "blue") +
+  labs(title = "Miles per gallon density plot and histogram",
+       x = "Miles per gallon",
+       y = "Density")
+```
+
+### Boxplots
+
+Boxplots are really useful in descriptive statistics and are often underused (mostly because it is not well understood by the public). A boxplot graphically represents the distribution of a quantitative variable by visually displaying five common location summary (minimum, median, first/third quartiles and maximum) and any observation that was classified as a suspected [outlier](http://localhost:6653/blog/outliers-detection-in-r/) using the interquartile range (IQR) criterion.
+
+The IQR criterion means that all observations above $q_{0.75}+1.5\cdot IQR$ or below $q_{0.25}-1.5\cdot IQR$ (where $q_{0.25}$ and $q_{0.75}$ correspond to first and third quartile respectively) are considered as potential outliers by R. The minimum and maximum in the boxplot are represented without these suspected outliers.
+
+Seeing all these information on the same plot help to have a good first overview of the dispersion and the location of the data. Before drawing a boxplot of our data, see below a graph explaining the information present on a boxplot:
+
+![How to interpret a boxplot? Source: LFSAB1105](./images/how-to-interpret-boxplot.png){width="100%"}
+
+Now, an example with our data set, in basic R:
+
+```{r}
+boxplot(mtcars_mpg)
+```
+
+Same example with `ggplot` :
+
+```{r}
+mtcars |> 
+  ggplot(aes(x = mpg)) +
+  geom_boxplot()
+```
+
+Note that we omitted the first argument in `ggplot` given that we are using a pipe, `|>`. Using pipes is very handy, since it's easier to see the flow of the computations this way. We will explain pipes and their use later in the course.
